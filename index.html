@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#111827">
   <link rel="icon" type="image/png" href="logo-star.png">
   <title>SlideForge Lite</title>
   <style>
@@ -24,6 +24,7 @@
     }
 
     * { box-sizing: border-box; }
+
     html, body {
       height: 100%;
       margin: 0;
@@ -64,22 +65,22 @@
     }
 
     .logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: transparent;
-  box-shadow: 0 0 24px rgba(139, 92, 246, 0.38);
-}
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: transparent;
+      box-shadow: 0 0 24px rgba(139, 92, 246, 0.38);
+    }
 
-.logo img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border-radius: 12px;
-}
+    .logo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      border-radius: 12px;
+    }
 
     .title-wrap {
       min-width: 0;
@@ -240,37 +241,38 @@
     }
 
     .stage-shell {
-  min-height: 0;
-  display: grid;
-  place-items: center;
-  padding: 8px;
-  overflow: auto;
-  position: relative;
-  background-image:
-    linear-gradient(45deg, rgba(255,255,255,0.025) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,0.025) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.025) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.025) 75%);
-  background-size: 24px 24px;
-  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
-}
-.stage-shell.no-bg-grid {
-  background-image: none;
-}
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 8px;
+      overflow: auto;
+      position: relative;
+      background-image:
+        linear-gradient(45deg, rgba(255,255,255,0.025) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.025) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.025) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.025) 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    }
+
+    .stage-shell.no-bg-grid {
+      background-image: none;
+    }
 
     .stage-viewport {
-  position: relative;
-  width: min(100%, calc((100vh - 150px) * 1.7778));
-  aspect-ratio: 16 / 9;
-  height: auto;
-  min-height: 340px;
-  max-height: calc(100vh - 150px);
-  border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.05);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
+      position: relative;
+      width: min(100%, calc((100vh - 150px) * 1.7778));
+      aspect-ratio: 16 / 9;
+      height: auto;
+      min-height: 340px;
+      max-height: calc(100vh - 150px);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
 
     .slide-canvas {
       position: absolute;
@@ -472,27 +474,29 @@
     }
 
     .present-shell {
-  position: relative;
-  width: min(94vw, 1600px);
-  height: min(84vh, calc(94vw * 0.5625));
-  aspect-ratio: 16 / 9;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-  background: #111;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+      position: relative;
+      width: min(94vw, 1600px);
+      height: min(84vh, calc(94vw * 0.5625));
+      aspect-ratio: 16 / 9;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     .present-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1280px;
-  height: 720px;
-  transform-origin: top left;
-}
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 720px;
+      transform-origin: top left;
+      overflow: hidden;
+      background: white;
+    }
 
     .present-controls {
       display: flex;
@@ -529,60 +533,60 @@
       display: none !important;
     }
 
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(5, 8, 22, 0.72);
-  backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
-  z-index: 400;
-}
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 22, 0.72);
+      backdrop-filter: blur(6px);
+      display: grid;
+      place-items: center;
+      z-index: 400;
+    }
 
-.modal-box {
-  position: relative;
-  width: min(460px, calc(100vw - 32px));
-  background: rgba(17, 24, 39, 0.96);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-  padding: 20px;
-}
+    .modal-box {
+      position: relative;
+      width: min(460px, calc(100vw - 32px));
+      background: rgba(17, 24, 39, 0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      padding: 20px;
+    }
 
-.modal-box h3 {
-  margin: 0 0 14px;
-  font-size: 20px;
-  color: #f3f4f6;
-}
+    .modal-box h3 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      color: #f3f4f6;
+    }
 
-.modal-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  color: var(--text);
-  cursor: pointer;
-  font-size: 18px;
-}
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+    }
 
-.modal-close:hover {
-  background: rgba(255,255,255,0.1);
-}
+    .modal-close:hover {
+      background: rgba(255,255,255,0.1);
+    }
 
     .modal-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-}
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
 
-.modal-actions .btn {
-  width: 100%;
-}
+    .modal-actions .btn {
+      width: 100%;
+    }
 
     @media (max-width: 1200px) {
       .workspace {
@@ -594,21 +598,24 @@
       .workspace {
         grid-template-columns: 1fr;
       }
+
       .panel, .panel.right {
         display: none;
       }
+
       .stage-viewport {
         width: 100%;
         height: min(64vh, 70vw);
       }
+
       .topbar {
         grid-template-columns: 1fr;
       }
+
       .toolbar, .toolbar-right {
         justify-content: flex-start;
       }
     }
-
   </style>
 </head>
 <body>
@@ -616,8 +623,8 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">
-  <img src="logo-star.png" alt="SlideForge Lite logo" />
-</div>
+          <img src="logo-star.png" alt="SlideForge Lite logo" />
+        </div>
         <div class="title-wrap">
           <small>SlideForge Lite</small>
           <input id="deckTitle" value="Untitled Presentation" />
@@ -625,17 +632,17 @@
       </div>
 
       <div class="toolbar">
-  <button class="btn" id="newDeckBtn">New deck</button>
-  <button class="btn" id="fileBtn">File</button>
-  <input id="fileLoader" type="file" accept="application/json" class="hidden" />
-</div>
+        <button class="btn" id="newDeckBtn">New deck</button>
+        <button class="btn" id="fileBtn">File</button>
+        <input id="fileLoader" type="file" accept="application/json" class="hidden" />
+      </div>
 
       <div class="toolbar-right">
-  <button class="btn" id="shortcutsBtn">Shortcuts</button>
-  <button class="btn" id="duplicateSlideBtn">Duplicate slide</button>
-  <button class="btn danger" id="deleteSlideBtn">Delete slide</button>
-  <button class="btn primary" id="presentBtn">Present ▶</button>
-</div>
+        <button class="btn" id="shortcutsBtn">Shortcuts</button>
+        <button class="btn" id="duplicateSlideBtn">Duplicate slide</button>
+        <button class="btn danger" id="deleteSlideBtn">Delete slide</button>
+        <button class="btn primary" id="presentBtn">Present ▶</button>
+      </div>
     </header>
 
     <div class="workspace">
@@ -649,7 +656,6 @@
           </div>
           <div class="slide-list" id="slideList"></div>
         </div>
-
       </aside>
 
       <main class="center">
@@ -777,31 +783,31 @@
     </div>
   </div>
 
-<div class="modal-overlay hidden" id="shortcutsModal">
-  <div class="modal-box">
-    <button class="modal-close" id="closeShortcutsBtn">✕</button>
-    <h3>Shortcuts</h3>
-    <div class="hint-box">
-      Delete = remove selected element<br>
-      Arrow keys = move selected element<br>
-      Shift + Arrow = move faster<br>
-      Ctrl/Cmd + D = duplicate selected element<br>
-      Double click text = edit content
+  <div class="modal-overlay hidden" id="shortcutsModal">
+    <div class="modal-box">
+      <button class="modal-close" id="closeShortcutsBtn">✕</button>
+      <h3>Shortcuts</h3>
+      <div class="hint-box">
+        Delete = remove selected element<br>
+        Arrow keys = move selected element<br>
+        Shift + Arrow = move faster<br>
+        Ctrl/Cmd + D = duplicate selected element<br>
+        Double click text = edit content
+      </div>
     </div>
   </div>
-</div>
 
-<div class="modal-overlay hidden" id="fileModal">
-  <div class="modal-box">
-    <button class="modal-close" id="closeFileBtn">✕</button>
-    <h3>File</h3>
-    <div class="modal-actions">
-      <button class="btn" id="modalSaveBtn">Save</button>
-      <button class="btn" id="modalOpenBtn">Open</button>
+  <div class="modal-overlay hidden" id="fileModal">
+    <div class="modal-box">
+      <button class="modal-close" id="closeFileBtn">✕</button>
+      <h3>File</h3>
+      <div class="modal-actions">
+        <button class="btn" id="modalSaveBtn">Save</button>
+        <button class="btn" id="modalOpenBtn">Open</button>
+      </div>
     </div>
   </div>
-</div>
-  
+
   <script>
     const LOGICAL_W = 1280;
     const LOGICAL_H = 720;
@@ -819,7 +825,9 @@
       scale: 1,
       dragging: null,
       statusTimer: null,
-      presenting: false
+      presenting: false,
+      isDirty: false,
+      autosaveIntervalId: null
     };
 
     const $ = (id) => document.getElementById(id);
@@ -959,9 +967,16 @@
       appState.statusTimer = setTimeout(() => toast.classList.remove("show"), 1400);
     }
 
-    function autosave() {
+    function autosave(force = false) {
+      if (!force && !appState.isDirty) return;
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.deck));
-      showStatus("Autosaved");
+      appState.isDirty = false;
+      showStatus(force ? "Saved" : "Autosaved");
+    }
+
+    function markDirty() {
+      appState.isDirty = true;
     }
 
     function loadAutosave() {
@@ -1005,27 +1020,31 @@
     }
 
     function init() {
-  const saved = loadAutosave();
-  appState.deck = normalizeDeck(saved || makeDeck());
-  $("deckTitle").value = appState.deck.title;
-  buildThemeSwatches();
-  bindEvents();
-  render();
-  updateCanvasScale();
+      const saved = loadAutosave();
+      appState.deck = normalizeDeck(saved || makeDeck());
+      $("deckTitle").value = appState.deck.title;
+      buildThemeSwatches();
+      bindEvents();
+      render();
+      updateCanvasScale();
 
-  window.addEventListener("resize", () => {
-    updateCanvasScale();
-    if (appState.presenting) updatePresentScale();
-  });
+      window.addEventListener("resize", () => {
+        updateCanvasScale();
+        if (appState.presenting) updatePresentScale();
+      });
 
-  document.addEventListener("fullscreenchange", () => {
-    if (appState.presenting && !document.fullscreenElement) {
-      appState.presenting = false;
-      presentOverlay.classList.remove("open");
-      document.body.style.overflow = "";
+      document.addEventListener("fullscreenchange", () => {
+        if (appState.presenting && !document.fullscreenElement) {
+          appState.presenting = false;
+          presentOverlay.classList.remove("open");
+          document.body.style.overflow = "";
+        }
+      });
+
+      appState.autosaveIntervalId = setInterval(() => {
+        autosave();
+      }, 60000);
     }
-  });
-}
 
     function buildThemeSwatches() {
       const wrap = $("themeSwatches");
@@ -1038,7 +1057,7 @@
         sw.addEventListener("click", () => {
           getCurrentSlide().bg = color;
           render();
-          autosave();
+          markDirty();
         });
         wrap.appendChild(sw);
       });
@@ -1047,7 +1066,7 @@
     function bindEvents() {
       $("deckTitle").addEventListener("input", (e) => {
         appState.deck.title = e.target.value || "Untitled Presentation";
-        autosave();
+        markDirty();
       });
 
       $("newDeckBtn").addEventListener("click", () => {
@@ -1056,7 +1075,7 @@
         appState.selectedElementId = null;
         $("deckTitle").value = appState.deck.title;
         render();
-        autosave();
+        markDirty();
       });
 
       $("addSlideBtn").addEventListener("click", () => {
@@ -1076,7 +1095,7 @@
         appState.currentSlideIndex++;
         appState.selectedElementId = null;
         render();
-        autosave();
+        markDirty();
       });
 
       $("duplicateSlideBtn").addEventListener("click", () => {
@@ -1087,7 +1106,7 @@
         appState.currentSlideIndex++;
         appState.selectedElementId = null;
         render();
-        autosave();
+        markDirty();
       });
 
       $("deleteSlideBtn").addEventListener("click", () => {
@@ -1100,7 +1119,7 @@
         }
         appState.selectedElementId = null;
         render();
-        autosave();
+        markDirty();
       });
 
       $("moveSlideUpBtn").addEventListener("click", () => moveSlide(-1));
@@ -1119,7 +1138,7 @@
       $("slideBgInput").addEventListener("input", (e) => {
         getCurrentSlide().bg = e.target.value;
         renderStage();
-        autosave();
+        markDirty();
       });
 
       $("fileLoader").addEventListener("change", handleJsonLoad);
@@ -1134,9 +1153,9 @@
       });
 
       $("gridToggle").addEventListener("change", (e) => {
-  slideCanvas.classList.toggle("canvas-grid", e.target.checked);
-  document.querySelector(".stage-shell").classList.toggle("no-bg-grid", !e.target.checked);
-});
+        slideCanvas.classList.toggle("canvas-grid", e.target.checked);
+        document.querySelector(".stage-shell").classList.toggle("no-bg-grid", !e.target.checked);
+      });
 
       bindInspector();
       bindKeyboard();
@@ -1146,44 +1165,44 @@
       slideCanvas.addEventListener("input", handleTextInlineInput);
       slideCanvas.addEventListener("blur", handleTextInlineBlur, true);
 
-$("shortcutsBtn").addEventListener("click", () => {
-  $("shortcutsModal").classList.remove("hidden");
-});
+      $("shortcutsBtn").addEventListener("click", () => {
+        $("shortcutsModal").classList.remove("hidden");
+      });
 
-$("closeShortcutsBtn").addEventListener("click", () => {
-  $("shortcutsModal").classList.add("hidden");
-});
+      $("closeShortcutsBtn").addEventListener("click", () => {
+        $("shortcutsModal").classList.add("hidden");
+      });
 
-$("shortcutsModal").addEventListener("click", (e) => {
-  if (e.target === $("shortcutsModal")) {
-    $("shortcutsModal").classList.add("hidden");
-  }
-});
+      $("shortcutsModal").addEventListener("click", (e) => {
+        if (e.target === $("shortcutsModal")) {
+          $("shortcutsModal").classList.add("hidden");
+        }
+      });
 
-$("fileBtn").addEventListener("click", () => {
-  $("fileModal").classList.remove("hidden");
-});
+      $("fileBtn").addEventListener("click", () => {
+        $("fileModal").classList.remove("hidden");
+      });
 
-$("closeFileBtn").addEventListener("click", () => {
-  $("fileModal").classList.add("hidden");
-});
+      $("closeFileBtn").addEventListener("click", () => {
+        $("fileModal").classList.add("hidden");
+      });
 
-$("fileModal").addEventListener("click", (e) => {
-  if (e.target === $("fileModal")) {
-    $("fileModal").classList.add("hidden");
-  }
-});
+      $("fileModal").addEventListener("click", (e) => {
+        if (e.target === $("fileModal")) {
+          $("fileModal").classList.add("hidden");
+        }
+      });
 
-$("modalSaveBtn").addEventListener("click", () => {
-  saveDeckToFile();
-  $("fileModal").classList.add("hidden");
-});
+      $("modalSaveBtn").addEventListener("click", () => {
+        autosave(true);
+        saveDeckToFile();
+        $("fileModal").classList.add("hidden");
+      });
 
-$("modalOpenBtn").addEventListener("click", () => {
-  $("fileLoader").click();
-  $("fileModal").classList.add("hidden");
-});
-      
+      $("modalOpenBtn").addEventListener("click", () => {
+        $("fileLoader").click();
+        $("fileModal").classList.add("hidden");
+      });
     }
 
     function bindInspector() {
@@ -1199,20 +1218,19 @@ $("modalOpenBtn").addEventListener("click", () => {
 
     function bindKeyboard() {
       document.addEventListener("keydown", (e) => {
+        const shortcutsModal = $("shortcutsModal");
+        const fileModal = $("fileModal");
 
-const shortcutsModal = $("shortcutsModal");
-const fileModal = $("fileModal");
-
-if (
-  !shortcutsModal.classList.contains("hidden") ||
-  !fileModal.classList.contains("hidden")
-) {
-  if (e.key === "Escape") {
-    shortcutsModal.classList.add("hidden");
-    fileModal.classList.add("hidden");
-  }
-  return;
-}
+        if (
+          !shortcutsModal.classList.contains("hidden") ||
+          !fileModal.classList.contains("hidden")
+        ) {
+          if (e.key === "Escape") {
+            shortcutsModal.classList.add("hidden");
+            fileModal.classList.add("hidden");
+          }
+          return;
+        }
 
         if (appState.presenting) {
           if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
@@ -1271,7 +1289,7 @@ if (
 
         clampElement(el);
         render();
-        autosave();
+        markDirty();
       });
     }
 
@@ -1282,7 +1300,7 @@ if (
       [slides[appState.currentSlideIndex], slides[nextIndex]] = [slides[nextIndex], slides[appState.currentSlideIndex]];
       appState.currentSlideIndex = nextIndex;
       render();
-      autosave();
+      markDirty();
     }
 
     function addElement(el) {
@@ -1291,7 +1309,7 @@ if (
       slide.elements.push(el);
       appState.selectedElementId = el.id;
       render();
-      autosave();
+      markDirty();
     }
 
     function duplicateSelectedElement() {
@@ -1306,7 +1324,7 @@ if (
       slide.elements.push(copy);
       appState.selectedElementId = copy.id;
       render();
-      autosave();
+      markDirty();
     }
 
     function deleteSelectedElement() {
@@ -1316,7 +1334,7 @@ if (
       slide.elements.splice(idx, 1);
       appState.selectedElementId = null;
       render();
-      autosave();
+      markDirty();
     }
 
     function centerSelectedElement() {
@@ -1325,31 +1343,31 @@ if (
       el.x = Math.round((LOGICAL_W - el.w) / 2);
       el.y = Math.round((LOGICAL_H - el.h) / 2);
       render();
-      autosave();
+      markDirty();
     }
 
     function changeZ(direction) {
-  const slide = getCurrentSlide();
-  const index = slide.elements.findIndex(
-    (el) => el.id === appState.selectedElementId
-  );
-  if (index === -1) return;
+      const slide = getCurrentSlide();
+      const index = slide.elements.findIndex(
+        (el) => el.id === appState.selectedElementId
+      );
+      if (index === -1) return;
 
-  const [selected] = slide.elements.splice(index, 1);
+      const [selected] = slide.elements.splice(index, 1);
 
-  if (direction > 0) {
-    slide.elements.push(selected);     // bring to front
-  } else {
-    slide.elements.unshift(selected);  // send to back
-  }
+      if (direction > 0) {
+        slide.elements.push(selected);
+      } else {
+        slide.elements.unshift(selected);
+      }
 
-  slide.elements.forEach((el, i) => {
-    el.z = i + 1;
-  });
+      slide.elements.forEach((el, i) => {
+        el.z = i + 1;
+      });
 
-  render();
-  autosave();
-}
+      render();
+      markDirty();
+    }
 
     function saveDeckToFile() {
       const data = JSON.stringify(appState.deck, null, 2);
@@ -1374,7 +1392,7 @@ if (
           appState.selectedElementId = null;
           $("deckTitle").value = appState.deck.title;
           render();
-          autosave();
+          autosave(true);
           showStatus("Deck loaded");
         } catch {
           alert("Invalid JSON file.");
@@ -1421,7 +1439,7 @@ if (
 
       clampElement(el);
       render();
-      autosave();
+      markDirty();
     }
 
     function updateInspector() {
@@ -1661,7 +1679,7 @@ if (
         window.removeEventListener("mousemove", onMove);
         window.removeEventListener("mouseup", onUp);
         appState.dragging = null;
-        autosave();
+        markDirty();
       };
 
       window.addEventListener("mousemove", onMove);
@@ -1689,7 +1707,7 @@ if (
       const target = event.target.closest(".slide-element.text[contenteditable='true']");
       if (!target) return;
       target.contentEditable = "false";
-      autosave();
+      markDirty();
       render();
     }
 
@@ -1702,21 +1720,21 @@ if (
     }
 
     function clampElement(el) {
-  const snapEnabled = $("gridToggle").checked;
-  const snap = 20;
+      const snapEnabled = $("gridToggle").checked;
+      const snap = 20;
 
-  if (snapEnabled) {
-    el.x = Math.round(el.x / snap) * snap;
-    el.y = Math.round(el.y / snap) * snap;
-    el.w = Math.round(el.w / snap) * snap;
-    el.h = Math.round(el.h / snap) * snap;
-  }
+      if (snapEnabled) {
+        el.x = Math.round(el.x / snap) * snap;
+        el.y = Math.round(el.y / snap) * snap;
+        el.w = Math.round(el.w / snap) * snap;
+        el.h = Math.round(el.h / snap) * snap;
+      }
 
-  el.w = Math.max(20, Math.min(el.w, LOGICAL_W));
-  el.h = Math.max(20, Math.min(el.h, LOGICAL_H));
-  el.x = Math.max(-LOGICAL_W, Math.min(el.x, LOGICAL_W));
-  el.y = Math.max(-LOGICAL_H, Math.min(el.y, LOGICAL_H));
-}
+      el.w = Math.max(20, Math.min(el.w, LOGICAL_W));
+      el.h = Math.max(20, Math.min(el.h, LOGICAL_H));
+      el.x = Math.max(-LOGICAL_W, Math.min(el.x, LOGICAL_W));
+      el.y = Math.max(-LOGICAL_H, Math.min(el.y, LOGICAL_H));
+    }
 
     function updateCanvasScale() {
       const vw = stageViewport.clientWidth;
@@ -1779,8 +1797,8 @@ if (
     }
 
     if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
+      navigator.serviceWorker.register("sw.js");
+    }
 
     init();
   </script>
