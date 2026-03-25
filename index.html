@@ -569,6 +569,17 @@
   background: rgba(255,255,255,0.1);
 }
 
+    .modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.modal-actions .btn {
+  width: 100%;
+}
+
     @media (max-width: 1200px) {
       .workspace {
         grid-template-columns: 230px 1fr 280px;
@@ -610,11 +621,10 @@
       </div>
 
       <div class="toolbar">
-        <button class="btn" id="newDeckBtn">New deck</button>
-        <button class="btn" id="saveBtn">Save</button>
-        <button class="btn" id="loadBtn">Open</button>
-        <input id="fileLoader" type="file" accept="application/json" class="hidden" />
-      </div>
+  <button class="btn" id="newDeckBtn">New deck</button>
+  <button class="btn" id="fileBtn">File</button>
+  <input id="fileLoader" type="file" accept="application/json" class="hidden" />
+</div>
 
       <div class="toolbar-right">
   <button class="btn" id="shortcutsBtn">Shortcuts</button>
@@ -777,6 +787,17 @@
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="fileModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeFileBtn">✕</button>
+    <h3>File</h3>
+    <div class="modal-actions">
+      <button class="btn" id="modalSaveBtn">Save</button>
+      <button class="btn" id="modalOpenBtn">Open</button>
+    </div>
+  </div>
+</div>
+  
   <script>
     const LOGICAL_W = 1280;
     const LOGICAL_H = 720;
@@ -1088,8 +1109,6 @@
         autosave();
       });
 
-      $("saveBtn").addEventListener("click", saveDeckToFile);
-      $("loadBtn").addEventListener("click", () => $("fileLoader").click());
       $("fileLoader").addEventListener("change", handleJsonLoad);
 
       $("addImageBtn").addEventListener("click", () => $("imageInput").click());
@@ -1128,6 +1147,30 @@ $("shortcutsModal").addEventListener("click", (e) => {
   }
 });
 
+$("fileBtn").addEventListener("click", () => {
+  $("fileModal").classList.remove("hidden");
+});
+
+$("closeFileBtn").addEventListener("click", () => {
+  $("fileModal").classList.add("hidden");
+});
+
+$("fileModal").addEventListener("click", (e) => {
+  if (e.target === $("fileModal")) {
+    $("fileModal").classList.add("hidden");
+  }
+});
+
+$("modalSaveBtn").addEventListener("click", () => {
+  saveDeckToFile();
+  $("fileModal").classList.add("hidden");
+});
+
+$("modalOpenBtn").addEventListener("click", () => {
+  $("fileLoader").click();
+  $("fileModal").classList.add("hidden");
+});
+      
     }
 
     function bindInspector() {
@@ -1145,9 +1188,15 @@ $("shortcutsModal").addEventListener("click", (e) => {
       document.addEventListener("keydown", (e) => {
 
 const shortcutsModal = $("shortcutsModal");
-if (!shortcutsModal.classList.contains("hidden")) {
+const fileModal = $("fileModal");
+
+if (
+  !shortcutsModal.classList.contains("hidden") ||
+  !fileModal.classList.contains("hidden")
+) {
   if (e.key === "Escape") {
     shortcutsModal.classList.add("hidden");
+    fileModal.classList.add("hidden");
   }
   return;
 }
