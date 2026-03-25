@@ -1005,18 +1005,27 @@
     }
 
     function init() {
-      const saved = loadAutosave();
-      appState.deck = normalizeDeck(saved || makeDeck());
-      $("deckTitle").value = appState.deck.title;
-      buildThemeSwatches();
-      bindEvents();
-      render();
-      updateCanvasScale();
-      window.addEventListener("resize", () => {
-        updateCanvasScale();
-        if (appState.presenting) updatePresentScale();
-      });
+  const saved = loadAutosave();
+  appState.deck = normalizeDeck(saved || makeDeck());
+  $("deckTitle").value = appState.deck.title;
+  buildThemeSwatches();
+  bindEvents();
+  render();
+  updateCanvasScale();
+
+  window.addEventListener("resize", () => {
+    updateCanvasScale();
+    if (appState.presenting) updatePresentScale();
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    if (appState.presenting && !document.fullscreenElement) {
+      appState.presenting = false;
+      presentOverlay.classList.remove("open");
+      document.body.style.overflow = "";
     }
+  });
+}
 
     function buildThemeSwatches() {
       const wrap = $("themeSwatches");
