@@ -1,4 +1,4 @@
-const CACHE_NAME = "slideforge-lite-v9.1";
+const CACHE_NAME = "slideforge-lite-v9.2";
 const ASSETS = [
   "/slideforgelite/",
   "/slideforgelite/index.html",
