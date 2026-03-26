@@ -589,6 +589,17 @@
       width: 100%;
     }
 
+    .object-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.object-grid .btn {
+  width: 100%;
+}
+
     @media (max-width: 1200px) {
       .workspace {
         grid-template-columns: 230px 1fr 280px;
@@ -663,7 +674,6 @@
         <div class="editor-bar">
           <button class="btn" id="addTextBtn">+ Text</button>
           <button class="btn" id="addRectBtn">+ Rectangle</button>
-          <button class="btn" id="addCircleBtn">+ Circle</button>
           <button class="btn" id="addImageBtn">+ Image file</button>
           <button class="btn" id="addImageUrlBtn">+ Image URL</button>
           <input id="imageInput" type="file" accept="image/*" class="hidden" />
@@ -809,6 +819,20 @@
     </div>
   </div>
 
+  <div class="modal-overlay hidden" id="objectModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeObjectBtn">✕</button>
+    <h3>Choose object</h3>
+    <div class="object-grid">
+      <button class="btn" id="addRectObjectBtn">Rectangle</button>
+      <button class="btn" id="addCircleObjectBtn">Circle</button>
+      <button class="btn" id="addRoundedRectObjectBtn">Rounded rectangle</button>
+      <button class="btn" id="addSquareObjectBtn">Square</button>
+      <button class="btn" id="addPillObjectBtn">Pill</button>
+    </div>
+  </div>
+</div>
+
   <script>
     const LOGICAL_W = 1280;
     const LOGICAL_H = 720;
@@ -866,26 +890,58 @@
     }
 
     function makeShapeElement(shape = "rect", overrides = {}) {
-      return {
-        id: uid("el"),
-        type: "shape",
-        shape,
-        x: 240,
-        y: 180,
-        w: shape === "circle" ? 180 : 320,
-        h: 160,
-        rotation: 0,
-        opacity: 1,
-        color: shape === "circle" ? "#8b5cf6" : "#2563eb",
-        bgColor: shape === "circle" ? "#ddd6fe" : "#dbeafe",
-        fontSize: 32,
-        fontWeight: 700,
-        align: "center",
-        radius: shape === "circle" ? 999 : 24,
-        z: 1,
-        ...overrides
-      };
-    }
+  let w = 320;
+  let h = 160;
+  let radius = 24;
+  let color = "#2563eb";
+  let bgColor = "#dbeafe";
+
+  if (shape === "circle") {
+    w = 180;
+    h = 180;
+    radius = 999;
+    color = "#8b5cf6";
+    bgColor = "#ddd6fe";
+  } else if (shape === "roundedRect") {
+    w = 320;
+    h = 180;
+    radius = 40;
+    color = "#2563eb";
+    bgColor = "#dbeafe";
+  } else if (shape === "square") {
+    w = 180;
+    h = 180;
+    radius = 18;
+    color = "#0ea5e9";
+    bgColor = "#dbeafe";
+  } else if (shape === "pill") {
+    w = 340;
+    h = 120;
+    radius = 999;
+    color = "#f43f5e";
+    bgColor = "#ffe4e6";
+  }
+
+  return {
+    id: uid("el"),
+    type: "shape",
+    shape,
+    x: 240,
+    y: 180,
+    w,
+    h,
+    rotation: 0,
+    opacity: 1,
+    color,
+    bgColor,
+    fontSize: 32,
+    fontWeight: 700,
+    align: "center",
+    radius,
+    z: 1,
+    ...overrides
+  };
+}
 
     function makeImageElement(src = "", overrides = {}) {
       return {
@@ -1127,8 +1183,44 @@
       $("moveSlideDownBtn").addEventListener("click", () => moveSlide(1));
 
       $("addTextBtn").addEventListener("click", () => addElement(makeTextElement()));
-      $("addRectBtn").addEventListener("click", () => addElement(makeShapeElement("rect")));
-      $("addCircleBtn").addEventListener("click", () => addElement(makeShapeElement("circle")));
+      $("objectBtn").addEventListener("click", () => {
+  $("objectModal").classList.remove("hidden");
+});
+
+$("closeObjectBtn").addEventListener("click", () => {
+  $("objectModal").classList.add("hidden");
+});
+
+$("objectModal").addEventListener("click", (e) => {
+  if (e.target === $("objectModal")) {
+    $("objectModal").classList.add("hidden");
+  }
+});
+
+$("addRectObjectBtn").addEventListener("click", () => {
+  addElement(makeShapeElement("rect"));
+  $("objectModal").classList.add("hidden");
+});
+
+$("addCircleObjectBtn").addEventListener("click", () => {
+  addElement(makeShapeElement("circle"));
+  $("objectModal").classList.add("hidden");
+});
+
+$("addRoundedRectObjectBtn").addEventListener("click", () => {
+  addElement(makeShapeElement("roundedRect"));
+  $("objectModal").classList.add("hidden");
+});
+
+$("addSquareObjectBtn").addEventListener("click", () => {
+  addElement(makeShapeElement("square"));
+  $("objectModal").classList.add("hidden");
+});
+
+$("addPillObjectBtn").addEventListener("click", () => {
+  addElement(makeShapeElement("pill"));
+  $("objectModal").classList.add("hidden");
+});
 
       $("duplicateElementBtn").addEventListener("click", duplicateSelectedElement);
       $("deleteElementBtn").addEventListener("click", deleteSelectedElement);
@@ -1220,18 +1312,21 @@
     function bindKeyboard() {
       document.addEventListener("keydown", (e) => {
         const shortcutsModal = $("shortcutsModal");
-        const fileModal = $("fileModal");
+const fileModal = $("fileModal");
+const objectModal = $("objectModal");
 
-        if (
-          !shortcutsModal.classList.contains("hidden") ||
-          !fileModal.classList.contains("hidden")
-        ) {
-          if (e.key === "Escape") {
-            shortcutsModal.classList.add("hidden");
-            fileModal.classList.add("hidden");
-          }
-          return;
-        }
+if (
+  !shortcutsModal.classList.contains("hidden") ||
+  !fileModal.classList.contains("hidden") ||
+  !objectModal.classList.contains("hidden")
+) {
+  if (e.key === "Escape") {
+    shortcutsModal.classList.add("hidden");
+    fileModal.classList.add("hidden");
+    objectModal.classList.add("hidden");
+  }
+  return;
+}
 
         if (appState.presenting) {
           if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
