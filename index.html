@@ -1641,17 +1641,20 @@ if (
     }
 
     function renderStage() {
-      const slide = getCurrentSlide();
-      slideCanvas.innerHTML = "";
-      slideCanvas.style.background = slide.bg || "#ffffff";
+  const slide = getCurrentSlide();
+  const bg = slide.bg || "#ffffff";
 
-      slide.elements
-        .slice()
-        .sort((a, b) => (a.z || 0) - (b.z || 0))
-        .forEach((el) => {
-          slideCanvas.appendChild(makeElementNode(el, true));
-        });
-    }
+  slideCanvas.innerHTML = "";
+  slideCanvas.style.background = bg;
+  stageViewport.style.background = bg;
+
+  slide.elements
+    .slice()
+    .sort((a, b) => (a.z || 0) - (b.z || 0))
+    .forEach((el) => {
+      slideCanvas.appendChild(makeElementNode(el, true));
+    });
+}
 
     function makeElementNode(el, interactive = false) {
       const node = document.createElement("div");
