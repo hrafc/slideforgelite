@@ -1833,54 +1833,85 @@ function escapeAttribute(value) {
     }
 
     function renderSlideList() {
-      slideList.innerHTML = "";
-      appState.deck.slides.forEach((slide, index) => {
-        const card = document.createElement("div");
-        card.className = "slide-card" + (index === appState.currentSlideIndex ? " active" : "");
-        card.addEventListener("click", () => {
-          appState.currentSlideIndex = index;
-          appState.selectedElementId = null;
-          render();
-        });
+  slideList.innerHTML = "";
 
-        const thumb = document.createElement("div");
-        thumb.className = "slide-thumb";
-        thumb.style.background = slide.bg || "#fff";
-        slide.elements
-          .slice()
-          .sort((a, b) => (a.z || 0) - (b.z || 0))
-          .slice(0, 6)
-          .forEach((el) => {
-            const mini = document.createElement("div");
-            mini.style.position = "absolute";
-            mini.style.left = `${(el.x / LOGICAL_W) * 100}%`;
-            mini.style.top = `${(el.y / LOGICAL_H) * 100}%`;
-            mini.style.width = `${Math.max(4, (el.w / LOGICAL_W) * 100)}%`;
-            mini.style.height = `${Math.max(4, (el.h / LOGICAL_H) * 100)}%`;
-            mini.style.opacity = el.opacity ?? 1;
-            mini.style.transform = `rotate(${el.rotation || 0}deg)`;
-            mini.style.borderRadius = `${Math.max(2, ((el.radius || 0) / LOGICAL_W) * 100)}px`;
-            if (el.type === "text") {
-              mini.style.background = "rgba(0,0,0,0.08)";
-            } else if (el.type === "shape") {
-              mini.style.background = el.color || "#93c5fd";
-            } else {
-              mini.style.background = "rgba(0,0,0,0.12)";
-            }
-            thumb.appendChild(mini);
-          });
+  appState.deck.slides.forEach((slide, index) => {
+    const card = document.createElement("div");
+    card.className = "slide-card" + (index === appState.currentSlideIndex ? " active" : "");
+    card.addEventListener("click", () => {
+      appState.currentSlideIndex = index;
+      appState.selectedElementId = null;
+      render();
+    });
 
-        const title = document.createElement("strong");
-        const firstText = slide.elements.find((el) => el.type === "text")?.text;
-        title.textContent = firstText ? firstText.replace(/\n/g, " ").slice(0, 40) : `Slide ${index + 1}`;
+    const thumb = document.createElement("div");
+    thumb.className = "slide-thumb";
+    thumb.style.background = slide.bg || "#fff";
 
-        const meta = document.createElement("small");
-        meta.textContent = `Slide ${index + 1} • ${slide.elements.length} item${slide.elements.length === 1 ? "" : "s"}`;
+    slide.elements
+      .slice()
+      .sort((a, b) => (a.z || 0) - (b.z || 0))
+      .slice(0, 12)
+      .forEach((el) => {
+        const mini = document.createElement("div");
+        mini.style.position = "absolute";
+        mini.style.left = `${(el.x / LOGICAL_W) * 100}%`;
+        mini.style.top = `${(el.y / LOGICAL_H) * 100}%`;
+        mini.style.width = `${Math.max(4, (el.w / LOGICAL_W) * 100)}%`;
+        mini.style.height = `${Math.max(4, (el.h / LOGICAL_H) * 100)}%`;
+        mini.style.opacity = el.opacity ?? 1;
+        mini.style.transform = `rotate(${el.rotation || 0}deg)`;
+        mini.style.borderRadius = `${Math.max(2, ((el.radius || 0) / LOGICAL_W) * 100)}px`;
+        mini.style.overflow = "hidden";
+        mini.style.boxSizing = "border-box";
 
-        card.append(thumb, title, meta);
-        slideList.appendChild(card);
+        if (el.type === "text") {
+          mini.textContent = (el.text || "").replace(/\n/g, " ");
+          mini.style.color = el.color || "#111827";
+          mini.style.background = isTransparentLike(el.bgColor)
+            ? "transparent"
+            : (el.bgColor || "transparent");
+          mini.style.fontSize = `${Math.max(6, (el.fontSize || 32) * 0.12)}px`;
+          mini.style.fontWeight = String(el.fontWeight || 400);
+          mini.style.textAlign = el.align || "left";
+          mini.style.lineHeight = "1.1";
+          mini.style.padding = "2px 3px";
+          mini.style.whiteSpace = "nowrap";
+          mini.style.textOverflow = "ellipsis";
+        } else if (el.type === "shape") {
+          mini.style.background = el.color || "#93c5fd";
+          mini.style.borderRadius = el.shape === "circle"
+            ? "999px"
+            : `${Math.max(2, ((el.radius || 24) / LOGICAL_W) * 100)}px`;
+        } else if (el.type === "image") {
+          if (el.imageSrc) {
+            const img = document.createElement("img");
+            img.src = el.imageSrc;
+            img.alt = "";
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.display = "block";
+            mini.appendChild(img);
+          } else {
+            mini.style.background = "rgba(0,0,0,0.12)";
+          }
+        }
+
+        thumb.appendChild(mini);
       });
-    }
+
+    const title = document.createElement("strong");
+    const firstText = slide.elements.find((el) => el.type === "text")?.text;
+    title.textContent = firstText ? firstText.replace(/\n/g, " ").slice(0, 40) : `Slide ${index + 1}`;
+
+    const meta = document.createElement("small");
+    meta.textContent = `Slide ${index + 1} • ${slide.elements.length} item${slide.elements.length === 1 ? "" : "s"}`;
+
+    card.append(thumb, title, meta);
+    slideList.appendChild(card);
+  });
+}
 
     function renderStage() {
   const slide = getCurrentSlide();
