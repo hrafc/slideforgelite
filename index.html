@@ -456,28 +456,33 @@
     }
 
     .present-overlay {
-      position: fixed;
-      inset: 0;
-      background: #050816;
-      z-index: 200;
-      display: none;
-      grid-template-rows: 1fr auto;
-    }
+  position: fixed;
+  inset: 0;
+  background: #050816;
+  z-index: 200;
+  display: none;
+}
+
+.present-overlay.open {
+  display: block;
+}
 
     .present-overlay.open {
       display: grid;
     }
 
     .present-stage {
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
-  padding: 8px 12px 0;
+  padding: 8px;
 }
 
     .present-shell {
   position: relative;
-  width: min(96vw, 1700px);
-  height: min(90vh, calc(96vw * 0.5625));
+  width: min(98vw, calc((100vh - 16px) * 1.7778));
+  height: min(calc(100vh - 16px), calc(98vw * 0.5625));
   aspect-ratio: 16 / 9;
   border-radius: 20px;
   overflow: hidden;
@@ -500,12 +505,20 @@
     }
 
     .present-controls {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
-  padding: 6px 16px 10px;
+  padding: 8px 14px;
   color: #cbd5e1;
+  background: rgba(5, 8, 22, 0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  z-index: 220;
 }
 
     .kbd {
