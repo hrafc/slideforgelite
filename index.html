@@ -659,7 +659,7 @@
       <div class="toolbar">
         <button class="btn" id="newDeckBtn">New deck</button>
         <button class="btn" id="fileBtn">File</button>
-        <input id="fileLoader" type="file" accept="application/json" class="hidden" />
+        <input id="fileLoader" type="file" accept=".html,text/html,.json,application/json" class="hidden" />
       </div>
 
       <div class="toolbar-right">
@@ -1247,8 +1247,8 @@ $("addPillObjectBtn").addEventListener("click", () => {
         markDirty();
       });
 
-      $("fileLoader").addEventListener("change", handleJsonLoad);
-
+      $("fileLoader").addEventListener("change", handleProjectLoad);
+      
       $("addImageBtn").addEventListener("click", () => $("imageInput").click());
       $("imageInput").addEventListener("change", handleImageUpload);
       $("addImageUrlBtn").addEventListener("click", addImageFromUrl);
@@ -1496,6 +1496,9 @@ if (
     `;
   }).join("");
 
+      const embeddedProjectData = JSON.stringify(appState.deck, null, 2)
+  .replace(/</g, "\\u003c");
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1609,6 +1612,8 @@ if (
     <span>fullscreen off</span>
     <span class="badge" id="counter">1 / ${appState.deck.slides.length}</span>
   </div>
+
+  <script id="slideforge-project-data" type="application/json">${embeddedProjectData}</script>
 
   <script>
     const slides = Array.from(document.querySelectorAll(".slide"));
@@ -1731,27 +1736,43 @@ function escapeAttribute(value) {
   return String(value).replace(/"/g, "&quot;");
 }
 
-    function handleJsonLoad(event) {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(reader.result);
-          appState.deck = normalizeDeck(parsed);
-          appState.currentSlideIndex = 0;
-          appState.selectedElementId = null;
-          $("deckTitle").value = appState.deck.title;
-          render();
-          autosave(true);
-          showStatus("Deck loaded");
-        } catch {
-          alert("Invalid JSON file.");
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = "";
+    function handleProjectLoad(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try {
+      const text = String(reader.result || "");
+      let parsed = null;
+
+      const htmlMatch = text.match(
+        /<script[^>]*id=["']slideforge-project-data["'][^>]*>([\s\S]*?)<\/script>/i
+      );
+
+      if (htmlMatch) {
+        parsed = JSON.parse(htmlMatch[1]);
+      } else {
+        parsed = JSON.parse(text);
+      }
+
+      appState.deck = normalizeDeck(parsed);
+      appState.currentSlideIndex = 0;
+      appState.selectedElementId = null;
+      $("deckTitle").value = appState.deck.title || "Untitled Presentation";
+      render();
+      autosave(true);
+      showStatus("Presentation loaded");
+    } catch (error) {
+      alert("Invalid SlideForge HTML or JSON file.");
+      console.error(error);
     }
+  };
+
+  reader.readAsText(file);
+  event.target.value = "";
+}
 
     function handleImageUpload(event) {
       const file = event.target.files?.[0];
