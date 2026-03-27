@@ -1756,29 +1756,37 @@ function escapeAttribute(value) {
     }
 
     function syncInspectorToElement() {
-      const el = getSelectedElement();
-      if (!el) return;
+  const el = getSelectedElement();
+  if (!el) return;
 
-      el.x = Number($("elX").value || el.x);
-      el.y = Number($("elY").value || el.y);
-      el.w = Math.max(20, Number($("elW").value || el.w));
-      el.h = Math.max(20, Number($("elH").value || el.h));
-      el.rotation = Number($("elRotation").value || 0);
-      el.opacity = Number($("elOpacity").value || 1);
-      el.color = $("elColor").value || el.color;
-      el.bgColor = $("elBgColor").value || el.bgColor;
-      el.fontSize = Math.max(8, Number($("elFontSize").value || el.fontSize));
-      el.radius = Math.max(0, Number($("elRadius").value || el.radius));
-      el.align = $("elAlign").value || el.align;
-      el.fontWeight = Number($("elWeight").value || el.fontWeight);
+  el.x = Number($("elX").value || el.x);
+  el.y = Number($("elY").value || el.y);
+  el.w = Math.max(20, Number($("elW").value || el.w));
+  el.h = Math.max(20, Number($("elH").value || el.h));
+  el.rotation = Number($("elRotation").value || 0);
+  el.opacity = Number($("elOpacity").value || 1);
+  el.color = $("elColor").value || el.color;
+  el.bgColor = $("elBgColor").value || el.bgColor;
+  el.fontSize = Math.max(8, Number($("elFontSize").value || el.fontSize));
+  el.radius = Math.max(0, Number($("elRadius").value || el.radius));
+  el.align = $("elAlign").value || el.align;
+  el.fontWeight = Number($("elWeight").value || el.fontWeight);
 
-      if (el.type === "text") el.text = $("elText").value;
-      if (el.type === "image") el.imageSrc = $("elImageSrc").value;
+  if (el.type === "text") el.text = $("elText").value;
+  if (el.type === "image") el.imageSrc = $("elImageSrc").value;
 
-      clampElement(el);
-      render();
-      markDirty();
-    }
+  if (el.type === "shape" && el.shape === "circle") {
+    const size = Math.max(el.w, el.h);
+    el.w = size;
+    el.h = size;
+  }
+
+  clampElement(el);
+
+  renderStage();
+  renderSlideList();
+  markDirty();
+}
 
     function updateInspector() {
       const el = getSelectedElement();
