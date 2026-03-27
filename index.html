@@ -1781,7 +1781,7 @@ function escapeAttribute(value) {
     el.h = size;
   }
 
-  clampElement(el);
+  clampElement(el, false);
 
   renderStage();
   renderSlideList();
@@ -2099,22 +2099,22 @@ function escapeAttribute(value) {
       };
     }
 
-    function clampElement(el) {
-      const snapEnabled = $("gridToggle").checked;
-      const snap = 20;
+    function clampElement(el, useSnap = true) {
+  const snapEnabled = $("gridToggle").checked;
+  const snap = 20;
 
-      if (snapEnabled) {
-        el.x = Math.round(el.x / snap) * snap;
-        el.y = Math.round(el.y / snap) * snap;
-        el.w = Math.round(el.w / snap) * snap;
-        el.h = Math.round(el.h / snap) * snap;
-      }
+  if (useSnap && snapEnabled) {
+    el.x = Math.round(el.x / snap) * snap;
+    el.y = Math.round(el.y / snap) * snap;
+    el.w = Math.round(el.w / snap) * snap;
+    el.h = Math.round(el.h / snap) * snap;
+  }
 
-      el.w = Math.max(20, Math.min(el.w, LOGICAL_W));
-      el.h = Math.max(20, Math.min(el.h, LOGICAL_H));
-      el.x = Math.max(-LOGICAL_W, Math.min(el.x, LOGICAL_W));
-      el.y = Math.max(-LOGICAL_H, Math.min(el.y, LOGICAL_H));
-    }
+  el.w = Math.max(20, Math.min(el.w, LOGICAL_W));
+  el.h = Math.max(20, Math.min(el.h, LOGICAL_H));
+  el.x = Math.max(-LOGICAL_W, Math.min(el.x, LOGICAL_W));
+  el.y = Math.max(-LOGICAL_H, Math.min(el.y, LOGICAL_H));
+}
 
     function updateCanvasScale() {
       const vw = stageViewport.clientWidth;
