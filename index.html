@@ -1497,7 +1497,9 @@ if (
   }).join("");
 
       const embeddedProjectData = JSON.stringify(appState.deck, null, 2)
-  .replace(/</g, "\\u003c");
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e")
+  .replace(/&/g, "\\u0026");
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -1735,8 +1737,8 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
   return String(value).replace(/"/g, "&quot;");
 }
-
-    function handleProjectLoad(event) {
+      
+function handleProjectLoad(event) {
   const file = event.target.files?.[0];
   if (!file) return;
 
@@ -1744,17 +1746,34 @@ function escapeAttribute(value) {
 
   reader.onload = () => {
     try {
-      const text = String(reader.result || "");
+      const rawText = String(reader.result || "");
+      const text = rawText.replace(/^\uFEFF/, "").trim();
       let parsed = null;
 
-      const htmlMatch = text.match(
-        /<script[^>]*id=["']slideforge-project-data["'][^>]*>([\s\S]*?)<\/script>/i
-      );
+      const isJsonFile =
+        /\.json$/i.test(file.name) ||
+        text.startsWith("{") ||
+        text.startsWith("[");
 
-      if (htmlMatch) {
-        parsed = JSON.parse(htmlMatch[1]);
-      } else {
+      if (isJsonFile) {
         parsed = JSON.parse(text);
+      } else {
+        const doc = new DOMParser().parseFromString(text, "text/html");
+        const projectScript = doc.querySelector("#slideforge-project-data");
+
+        if (!projectScript) {
+          throw new Error("Missing #slideforge-project-data in HTML file.");
+        }
+
+        const jsonText = (projectScript.textContent || "")
+          .replace(/^\uFEFF/, "")
+          .trim();
+
+        if (!jsonText) {
+          throw new Error("Embedded project data is empty.");
+        }
+
+        parsed = JSON.parse(jsonText);
       }
 
       appState.deck = normalizeDeck(parsed);
@@ -1762,18 +1781,19 @@ function escapeAttribute(value) {
       appState.selectedElementId = null;
       $("deckTitle").value = appState.deck.title || "Untitled Presentation";
       render();
+      appState.isDirty = false;
       autosave(true);
       showStatus("Presentation loaded");
     } catch (error) {
-      alert("Invalid SlideForge HTML or JSON file.");
-      console.error(error);
+      console.error("Load error:", error);
+      alert("This file is not a valid SlideForge project HTML or JSON.");
     }
   };
 
   reader.readAsText(file);
   event.target.value = "";
 }
-
+  
     function handleImageUpload(event) {
       const file = event.target.files?.[0];
       if (!file) return;
