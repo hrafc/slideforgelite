@@ -663,11 +663,13 @@
       </div>
 
       <div class="toolbar-right">
-        <button class="btn" id="shortcutsBtn">Shortcuts</button>
-        <button class="btn" id="duplicateSlideBtn">Duplicate slide</button>
-        <button class="btn danger" id="deleteSlideBtn">Delete slide</button>
-        <button class="btn primary" id="presentBtn">Present ▶</button>
-      </div>
+  <button class="btn hidden" id="installAppBtn">Install</button>
+  <button class="btn" id="shortcutsBtn">Shortcuts</button>
+  <button class="btn" id="duplicateSlideBtn">Duplicate slide</button>
+  <button class="btn danger" id="deleteSlideBtn">Delete slide</button>
+  <button class="btn primary" id="presentBtn">Present ▶</button>
+</div>
+      
     </header>
 
     <div class="workspace">
@@ -869,12 +871,15 @@
     };
 
     const $ = (id) => document.getElementById(id);
-    const stageViewport = $("stageViewport");
-    const slideCanvas = $("slideCanvas");
-    const slideList = $("slideList");
-    const presentOverlay = $("presentOverlay");
-    const presentCanvas = $("presentCanvas");
-    const presentShell = $("presentShell");
+const stageViewport = $("stageViewport");
+const slideCanvas = $("slideCanvas");
+const slideList = $("slideList");
+const presentOverlay = $("presentOverlay");
+const presentCanvas = $("presentCanvas");
+const presentShell = $("presentShell");
+const installAppBtn = $("installAppBtn");
+
+let deferredInstallPrompt = null;
 
     function uid(prefix = "id") {
       return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
@@ -1248,7 +1253,30 @@ $("addPillObjectBtn").addEventListener("click", () => {
       });
 
       $("fileLoader").addEventListener("change", handleProjectLoad);
-      
+
+      window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installAppBtn.classList.remove("hidden");
+});
+
+installAppBtn.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) return;
+
+  installAppBtn.classList.add("hidden");
+
+  const promptResult = await deferredInstallPrompt.prompt();
+  console.log("Install prompt result:", promptResult?.outcome);
+
+  deferredInstallPrompt = null;
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  installAppBtn.classList.add("hidden");
+  showStatus("App installed");
+});
+  
       $("addImageBtn").addEventListener("click", () => $("imageInput").click());
       $("imageInput").addEventListener("change", handleImageUpload);
       $("addImageUrlBtn").addEventListener("click", addImageFromUrl);
