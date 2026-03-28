@@ -657,7 +657,7 @@
       </div>
 
       <div class="toolbar">
-        <button class="btn" id="installAppBtn">Install</button>
+        <button class="btn" id="installAppBtn">Install App</button>
         <button class="btn" id="newDeckBtn">New deck</button>
         <button class="btn" id="fileBtn">File</button>
         <input id="fileLoader" type="file" accept=".sfl" class="hidden" />
@@ -834,6 +834,20 @@
     </div>
   </div>
 
+  <div class="modal-overlay hidden" id="installModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeInstallBtn">✕</button>
+    <h3>Install SlideForge Lite</h3>
+    <div class="hint-box">
+      Do you want to install SlideForge Lite?
+    </div>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <button class="btn primary" id="confirmInstallBtn">Install</button>
+      <button class="btn" id="cancelInstallBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
   <div class="modal-overlay hidden" id="objectModal">
   <div class="modal-box">
     <button class="modal-close" id="closeObjectBtn">✕</button>
@@ -870,7 +884,7 @@
       autosaveIntervalId: null
     };
 
-    const $ = (id) => document.getElementById(id);
+   const $ = (id) => document.getElementById(id);
 const stageViewport = $("stageViewport");
 const slideCanvas = $("slideCanvas");
 const slideList = $("slideList");
@@ -878,7 +892,13 @@ const presentOverlay = $("presentOverlay");
 const presentCanvas = $("presentCanvas");
 const presentShell = $("presentShell");
 const installAppBtn = $("installAppBtn");
+const installModal = $("installModal");
+const confirmInstallBtn = $("confirmInstallBtn");
+const cancelInstallBtn = $("cancelInstallBtn");
+const closeInstallBtn = $("closeInstallBtn");
+
 let deferredInstallPrompt = null;
+const INSTALL_STATE_KEY = "slideforge-lite-installed";
 
 window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
@@ -1063,6 +1083,25 @@ window.addEventListener("appinstalled", () => {
       appState.statusTimer = setTimeout(() => toast.classList.remove("show"), 1400);
     }
 
+    function isStandaloneMode() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function updateInstallButtonVisibility() {
+  const installedFlag = localStorage.getItem(INSTALL_STATE_KEY) === "1";
+  const shouldHide = installedFlag || isStandaloneMode();
+  installAppBtn.classList.toggle("hidden", shouldHide);
+}
+
+function openInstallModal() {
+  if (installAppBtn.classList.contains("hidden")) return;
+  installModal.classList.remove("hidden");
+}
+
+function closeInstallModal() {
+  installModal.classList.add("hidden");
+}
+
     function autosave(force = false) {
       if (!force && !appState.isDirty) return;
 
@@ -1120,9 +1159,10 @@ window.addEventListener("appinstalled", () => {
       appState.deck = normalizeDeck(saved || makeDeck());
       $("deckTitle").value = appState.deck.title;
       buildThemeSwatches();
-      bindEvents();
-      render();
-      updateCanvasScale();
+bindEvents();
+render();
+updateCanvasScale();
+updateInstallButtonVisibility();
 
       window.addEventListener("resize", () => {
         updateCanvasScale();
@@ -1278,22 +1318,51 @@ $("addPillObjectBtn").addEventListener("click", () => {
       window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
-  installAppBtn.disabled = false;
+  updateInstallButtonVisibility();
 });
 
-installAppBtn.addEventListener("click", async () => {
+installAppBtn.addEventListener("click", () => {
+  openInstallModal();
+});
+
+confirmInstallBtn.addEventListener("click", async () => {
+  closeInstallModal();
+
   if (!deferredInstallPrompt) {
     alert("Install is not available yet in this browser or the app is not installable yet.");
     return;
   }
 
-  const result = await deferredInstallPrompt.prompt();
-  console.log("Install prompt result:", result?.outcome);
+  deferredInstallPrompt.prompt();
+  const choiceResult = await deferredInstallPrompt.userChoice;
+
+  if (choiceResult?.outcome === "accepted") {
+    localStorage.setItem(INSTALL_STATE_KEY, "1");
+    installAppBtn.classList.add("hidden");
+  }
+
   deferredInstallPrompt = null;
 });
 
+cancelInstallBtn.addEventListener("click", () => {
+  closeInstallModal();
+});
+
+closeInstallBtn.addEventListener("click", () => {
+  closeInstallModal();
+});
+
+installModal.addEventListener("click", (e) => {
+  if (e.target === installModal) {
+    closeInstallModal();
+  }
+});
+
 window.addEventListener("appinstalled", () => {
+  localStorage.setItem(INSTALL_STATE_KEY, "1");
   deferredInstallPrompt = null;
+  closeInstallModal();
+  installAppBtn.classList.add("hidden");
   showStatus("App installed");
 });
   
@@ -1375,16 +1444,19 @@ window.addEventListener("appinstalled", () => {
         const shortcutsModal = $("shortcutsModal");
 const fileModal = $("fileModal");
 const objectModal = $("objectModal");
+const installModal = $("installModal");
 
 if (
   !shortcutsModal.classList.contains("hidden") ||
   !fileModal.classList.contains("hidden") ||
-  !objectModal.classList.contains("hidden")
+  !objectModal.classList.contains("hidden") ||
+  !installModal.classList.contains("hidden")
 ) {
   if (e.key === "Escape") {
     shortcutsModal.classList.add("hidden");
     fileModal.classList.add("hidden");
     objectModal.classList.add("hidden");
+    installModal.classList.add("hidden");
   }
   return;
 }
