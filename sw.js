@@ -3,8 +3,8 @@ const ASSETS = [
   "/slideforgelite/",
   "/slideforgelite/index.html",
   "/slideforgelite/manifest.json",
-  "/slideforgelite/icon-192.png",
-  "/slideforgelite/icon-512.png",
+  "/slideforgelite/icon-192-tight.png",
+  "/slideforgelite/icon-512-tight.png",
   "/slideforgelite/logo-star.png"
 ];
 
