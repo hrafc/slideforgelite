@@ -455,6 +455,113 @@
       transform: translateY(0);
     }
 
+    .loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top, rgba(124, 58, 237, 0.18), transparent 30%),
+    linear-gradient(180deg, #060b18 0%, #0b1020 100%);
+  overflow: hidden;
+}
+
+.loading-card {
+  width: min(520px, calc(100vw - 32px));
+  padding: 30px 28px 26px;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background:
+    radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 30%),
+    rgba(17, 24, 39, 0.92);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+  text-align: center;
+}
+
+.loading-logo-wrap {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  perspective: 1000px;
+}
+
+.loading-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.34));
+  animation: loadingStarCycle 2.8s ease-in-out infinite;
+  transform-origin: center center;
+  backface-visibility: visible;
+}
+
+@keyframes loadingStarCycle {
+  0% {
+    transform: scale(1) rotateY(0deg);
+  }
+  28% {
+    transform: scale(1.14) rotateY(0deg);
+  }
+  56% {
+    transform: scale(0.92) rotateY(0deg);
+  }
+  100% {
+    transform: scale(1) rotateY(-720deg);
+  }
+}
+
+.loading-title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.loading-subtitle {
+  color: #9fb0c9;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.loading-bar-shell {
+  width: 100%;
+  height: 18px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 10px rgba(0,0,0,0.22);
+}
+
+.loading-bar-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
+  transition: width 0.12s linear;
+}
+
+.loading-percent {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.loading-screen.done {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
     .present-overlay {
   position: fixed;
   inset: 0;
@@ -721,6 +828,24 @@
   </style>
 </head>
 <body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-card">
+    <div class="loading-logo-wrap">
+      <img src="logo-star.png" alt="SlideForge Lite logo" class="loading-logo" />
+    </div>
+
+    <div class="loading-title">SlideForge Lite</div>
+    <div class="loading-subtitle">Preparing your workspace...</div>
+
+    <div class="loading-bar-shell">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+
+    <div class="loading-percent" id="loadingPercent">0%</div>
+  </div>
+</div>
+  
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -978,6 +1103,9 @@ const slideList = $("slideList");
 const presentOverlay = $("presentOverlay");
 const presentCanvas = $("presentCanvas");
 const presentShell = $("presentShell");
+const loadingScreen = $("loadingScreen");
+const loadingBarFill = $("loadingBarFill");
+const loadingPercent = $("loadingPercent");
 const installAppBtn = $("installAppBtn");
 const installModal = $("installModal");
 const confirmInstallBtn = $("confirmInstallBtn");
@@ -1147,6 +1275,47 @@ const INSTALL_STATE_KEY = "slideforge-lite-installed";
       clearTimeout(appState.statusTimer);
       appState.statusTimer = setTimeout(() => toast.classList.remove("show"), 1400);
     }
+
+    function runLoadingScreen() {
+  return new Promise((resolve) => {
+    const minDuration = 10000;
+    const maxDuration = 30000;
+    const totalDuration = Math.floor(minDuration + Math.random() * (maxDuration - minDuration));
+
+    const start = performance.now();
+    document.body.style.overflow = "hidden";
+
+    function tick(now) {
+      const elapsed = now - start;
+      const raw = Math.min(elapsed / totalDuration, 1);
+
+      const eased = raw < 1 ? (1 - Math.pow(1 - raw, 1.65)) : 1;
+      const percent = Math.min(100, Math.floor(eased * 100));
+
+      loadingBarFill.style.width = `${eased * 100}%`;
+      loadingPercent.textContent = `${percent}%`;
+
+      if (raw < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        loadingBarFill.style.width = "100%";
+        loadingPercent.textContent = "100%";
+
+        setTimeout(() => {
+          loadingScreen.classList.add("done");
+
+          setTimeout(() => {
+            if (loadingScreen) loadingScreen.remove();
+            document.body.style.overflow = "";
+            resolve();
+          }, 700);
+        }, 250);
+      }
+    }
+
+    requestAnimationFrame(tick);
+  });
+}
 
     function isStandaloneMode() {
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
@@ -2554,10 +2723,12 @@ parsed = JSON.parse(text);
     }
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js");
-    }
+  navigator.serviceWorker.register("sw.js");
+}
 
-    init();
+runLoadingScreen().then(() => {
+  init();
+});
   </script>
 </body>
 </html>
