@@ -7,7 +7,6 @@
   <meta name="theme-color" content="#111827">
   <link rel="icon" type="image/png" href="logo-star.png">
   <title>SlideForge Lite</title>
-  <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
   <style>
     :root {
       --bg: #0f172a;
@@ -660,7 +659,7 @@
       <div class="toolbar">
         <button class="btn" id="newDeckBtn">New deck</button>
         <button class="btn" id="fileBtn">File</button>
-        <input id="fileLoader" type="file" accept=".sfl,.json,.html,text/html,application/json" class="hidden" />
+        <input id="fileLoader" type="file" accept=".sfl" class="hidden" />
       </div>
 
       <div class="toolbar-right">
@@ -1891,31 +1890,13 @@ function handleProjectLoad(event) {
       const text = rawText.replace(/^\uFEFF/, "").trim();
       let parsed = null;
 
-      const isJsonFile =
-  /\.(json|sfl)$/i.test(file.name) ||
-  text.startsWith("{") ||
-  text.startsWith("[");
+      const isSflFile = /\.sfl$/i.test(file.name);
 
-      if (isJsonFile) {
-        parsed = JSON.parse(text);
-      } else {
-        const doc = new DOMParser().parseFromString(text, "text/html");
-        const projectScript = doc.querySelector("#slideforge-project-data");
+      if (!isSflFile) {
+  throw new Error("Only .sfl project files are supported.");
+}
 
-        if (!projectScript) {
-          throw new Error("Missing #slideforge-project-data in HTML file.");
-        }
-
-        const jsonText = (projectScript.textContent || "")
-          .replace(/^\uFEFF/, "")
-          .trim();
-
-        if (!jsonText) {
-          throw new Error("Embedded project data is empty.");
-        }
-
-        parsed = JSON.parse(jsonText);
-      }
+parsed = JSON.parse(text);
 
       appState.deck = normalizeDeck(parsed);
       appState.currentSlideIndex = 0;
@@ -1927,7 +1908,7 @@ function handleProjectLoad(event) {
       showStatus("Presentation loaded");
     } catch (error) {
       console.error("Load error:", error);
-      alert("This file is not a valid SlideForge project HTML or JSON.");
+      alert("This file is not a valid SlideForge Lite .sfl project.");
     }
   };
 
