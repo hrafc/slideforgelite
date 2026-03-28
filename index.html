@@ -660,7 +660,7 @@
       <div class="toolbar">
         <button class="btn" id="newDeckBtn">New deck</button>
         <button class="btn" id="fileBtn">File</button>
-        <input id="fileLoader" type="file" accept=".html,text/html,.json,application/json" class="hidden" />
+        <input id="fileLoader" type="file" accept=".sfl,.json,.html,text/html,application/json" class="hidden" />
       </div>
 
       <div class="toolbar-right">
@@ -1300,9 +1300,9 @@ $("addPillObjectBtn").addEventListener("click", () => {
         }
       });
 
-      $("modalSaveBtn").addEventListener("click", async () => {
+      $("modalSaveBtn").addEventListener("click", () => {
   autosave(true);
-  await saveDeckToPptx();
+  saveDeckToSfl();
   $("fileModal").classList.add("hidden");
 });
 
@@ -1478,6 +1478,22 @@ if (
       render();
       markDirty();
     }
+
+    function saveDeckToSfl() {
+  const title = appState.deck.title || "Presentation";
+  const safeTitle = title.replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "presentation";
+
+  const projectData = JSON.stringify(appState.deck, null, 2);
+  const blob = new Blob([projectData], { type: "application/json" });
+
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${safeTitle}.sfl`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  showStatus("SFL project saved");
+}
 
     function saveDeckToFile() {
   const title = appState.deck.title || "Presentation";
@@ -1876,9 +1892,9 @@ function handleProjectLoad(event) {
       let parsed = null;
 
       const isJsonFile =
-        /\.json$/i.test(file.name) ||
-        text.startsWith("{") ||
-        text.startsWith("[");
+  /\.(json|sfl)$/i.test(file.name) ||
+  text.startsWith("{") ||
+  text.startsWith("[");
 
       if (isJsonFile) {
         parsed = JSON.parse(text);
