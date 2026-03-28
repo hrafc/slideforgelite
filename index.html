@@ -987,28 +987,6 @@ const closeInstallBtn = $("closeInstallBtn");
 let deferredInstallPrompt = null;
 const INSTALL_STATE_KEY = "slideforge-lite-installed";
 
-window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  deferredInstallPrompt = event;
-  installAppBtn.classList.remove("hidden");
-});
-
-installAppBtn.addEventListener("click", async () => {
-  if (!deferredInstallPrompt) return;
-
-  const result = await deferredInstallPrompt.prompt();
-  console.log("Install prompt result:", result?.outcome);
-
-  deferredInstallPrompt = null;
-  installAppBtn.classList.add("hidden");
-});
-
-window.addEventListener("appinstalled", () => {
-  deferredInstallPrompt = null;
-  installAppBtn.classList.add("hidden");
-  showStatus("App installed");
-});
-
     function uid(prefix = "id") {
       return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
     }
@@ -1435,6 +1413,28 @@ confirmInstallBtn.addEventListener("click", async () => {
   } else {
     updateInstallButtonVisibility();
   }
+});
+
+      cancelInstallBtn.addEventListener("click", () => {
+  closeInstallModal();
+});
+
+closeInstallBtn.addEventListener("click", () => {
+  closeInstallModal();
+});
+
+installModal.addEventListener("click", (e) => {
+  if (e.target === installModal) {
+    closeInstallModal();
+  }
+});
+
+window.addEventListener("appinstalled", () => {
+  localStorage.setItem(INSTALL_STATE_KEY, "1");
+  deferredInstallPrompt = null;
+  closeInstallModal();
+  installAppBtn.classList.add("hidden");
+  showStatus("App installed");
 });
   
       $("addImageBtn").addEventListener("click", () => $("imageInput").click());
