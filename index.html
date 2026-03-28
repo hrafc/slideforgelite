@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#111827">
   <link rel="icon" type="image/png" href="logo-star.png">
   <title>SlideForge Lite</title>
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
   <style>
     :root {
       --bg: #0f172a;
@@ -1299,11 +1300,11 @@ $("addPillObjectBtn").addEventListener("click", () => {
         }
       });
 
-      $("modalSaveBtn").addEventListener("click", () => {
-        autosave(true);
-        saveDeckToFile();
-        $("fileModal").classList.add("hidden");
-      });
+      $("modalSaveBtn").addEventListener("click", async () => {
+  autosave(true);
+  await saveDeckToPptx();
+  $("fileModal").classList.add("hidden");
+});
 
       $("modalOpenBtn").addEventListener("click", () => {
         $("fileLoader").click();
@@ -1736,6 +1737,130 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return String(value).replace(/"/g, "&quot;");
+}
+
+    function pxToInX(px) {
+  return (px / LOGICAL_W) * 13.333;
+}
+
+function pxToInY(px) {
+  return (px / LOGICAL_H) * 7.5;
+}
+
+function cssColorToHex(color) {
+  if (!color) return "000000";
+  const temp = document.createElement("div");
+  temp.style.color = color;
+  document.body.appendChild(temp);
+  const computed = getComputedStyle(temp).color;
+  document.body.removeChild(temp);
+
+  const match = computed.match(/\d+/g);
+  if (!match) return "000000";
+
+  return match
+    .slice(0, 3)
+    .map((n) => Number(n).toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase();
+}
+
+async function saveDeckToPptx() {
+  const pptx = new PptxGenJS();
+
+  pptx.layout = "LAYOUT_WIDE";
+  pptx.author = "SlideForge Lite";
+  pptx.company = "SlideForge Lite";
+  pptx.subject = appState.deck.title || "Presentation";
+  pptx.title = appState.deck.title || "Presentation";
+
+  for (const slideData of appState.deck.slides) {
+    const slide = pptx.addSlide();
+    const bgHex = cssColorToHex(slideData.bg || "#ffffff");
+
+    slide.background = { color: bgHex };
+
+    const elements = [...slideData.elements].sort((a, b) => (a.z || 0) - (b.z || 0));
+
+    for (const el of elements) {
+      const x = pxToInX(el.x);
+      const y = pxToInY(el.y);
+      const w = pxToInX(el.w);
+      const h = pxToInY(el.h);
+      const rotate = el.rotation || 0;
+
+      if (el.type === "text") {
+        const opts = {
+          x,
+          y,
+          w,
+          h,
+          margin: 0.08,
+          rotate,
+          bold: Number(el.fontWeight || 400) >= 700,
+          fontSize: Math.max(8, Math.round((el.fontSize || 32) * 0.75)),
+          color: cssColorToHex(el.color || "#111827"),
+          align: el.align || "left",
+          valign: "mid",
+          fit: "shrink"
+        };
+
+        if (!isTransparentLike(el.bgColor)) {
+          opts.fill = { color: cssColorToHex(el.bgColor || "#ffffff") };
+        }
+
+        slide.addText(el.text || "", opts);
+      }
+
+      else if (el.type === "shape") {
+        let shapeType = pptx.ShapeType.rect;
+
+        if (el.shape === "circle") shapeType = pptx.ShapeType.ellipse;
+        else if (el.shape === "roundedRect") shapeType = pptx.ShapeType.roundRect;
+        else if (el.shape === "square") shapeType = pptx.ShapeType.rect;
+        else if (el.shape === "pill") shapeType = pptx.ShapeType.roundRect;
+
+        slide.addShape(shapeType, {
+          x,
+          y,
+          w,
+          h,
+          rotate,
+          line: { color: cssColorToHex(el.color || "#60a5fa"), pt: 1 },
+          fill: { color: cssColorToHex(el.color || "#60a5fa") }
+        });
+      }
+
+      else if (el.type === "image" && el.imageSrc) {
+        const imgOpts = {
+          x,
+          y,
+          w,
+          h,
+          rotate
+        };
+
+        if (el.imageSrc.startsWith("data:image/")) {
+          slide.addImage({
+            data: el.imageSrc,
+            ...imgOpts
+          });
+        } else {
+          slide.addImage({
+            path: el.imageSrc,
+            ...imgOpts
+          });
+        }
+      }
+    }
+  }
+
+  const fileName = (appState.deck.title || "presentation")
+    .replace(/[^a-z0-9]+/gi, "_")
+    .replace(/^_+|_+$/g, "") || "presentation";
+
+  await pptx.writeFile({ fileName: `${fileName}.pptx` });
+  showStatus("PPTX exported");
 }
       
 function handleProjectLoad(event) {
