@@ -1416,41 +1416,25 @@ confirmInstallBtn.addEventListener("click", async () => {
   closeInstallModal();
 
   if (!deferredInstallPrompt) {
-    alert("Install is not available yet in this browser or the app is not installable yet.");
+    showStatus("Install is not available right now");
     return;
   }
 
-  deferredInstallPrompt.prompt();
-  const choiceResult = await deferredInstallPrompt.userChoice;
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+
+  await new Promise((resolve) => setTimeout(resolve, 120));
+
+  promptEvent.prompt();
+  const choiceResult = await promptEvent.userChoice;
 
   if (choiceResult?.outcome === "accepted") {
     localStorage.setItem(INSTALL_STATE_KEY, "1");
     installAppBtn.classList.add("hidden");
+    showStatus("App installed");
+  } else {
+    updateInstallButtonVisibility();
   }
-
-  deferredInstallPrompt = null;
-});
-
-cancelInstallBtn.addEventListener("click", () => {
-  closeInstallModal();
-});
-
-closeInstallBtn.addEventListener("click", () => {
-  closeInstallModal();
-});
-
-installModal.addEventListener("click", (e) => {
-  if (e.target === installModal) {
-    closeInstallModal();
-  }
-});
-
-window.addEventListener("appinstalled", () => {
-  localStorage.setItem(INSTALL_STATE_KEY, "1");
-  deferredInstallPrompt = null;
-  closeInstallModal();
-  installAppBtn.classList.add("hidden");
-  showStatus("App installed");
 });
   
       $("addImageBtn").addEventListener("click", () => $("imageInput").click());
