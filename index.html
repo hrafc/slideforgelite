@@ -663,7 +663,7 @@
       </div>
 
       <div class="toolbar-right">
-  <button class="btn hidden" id="installAppBtn">Install</button>
+  <button class="btn" id="installAppBtn">Install</button>
   <button class="btn" id="shortcutsBtn">Shortcuts</button>
   <button class="btn" id="duplicateSlideBtn">Duplicate slide</button>
   <button class="btn danger" id="deleteSlideBtn">Delete slide</button>
@@ -1257,23 +1257,22 @@ $("addPillObjectBtn").addEventListener("click", () => {
       window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
-  installAppBtn.classList.remove("hidden");
+  installAppBtn.disabled = false;
 });
 
 installAppBtn.addEventListener("click", async () => {
-  if (!deferredInstallPrompt) return;
+  if (!deferredInstallPrompt) {
+    alert("Install is not available yet in this browser or the app is not installable yet.");
+    return;
+  }
 
-  installAppBtn.classList.add("hidden");
-
-  const promptResult = await deferredInstallPrompt.prompt();
-  console.log("Install prompt result:", promptResult?.outcome);
-
+  const result = await deferredInstallPrompt.prompt();
+  console.log("Install prompt result:", result?.outcome);
   deferredInstallPrompt = null;
 });
 
 window.addEventListener("appinstalled", () => {
   deferredInstallPrompt = null;
-  installAppBtn.classList.add("hidden");
   showStatus("App installed");
 });
   
