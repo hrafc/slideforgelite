@@ -2479,8 +2479,18 @@ parsed = JSON.parse(text);
 
   el.w = Math.max(20, Math.min(el.w, LOGICAL_W));
   el.h = Math.max(20, Math.min(el.h, LOGICAL_H));
-  el.x = Math.max(-LOGICAL_W, Math.min(el.x, LOGICAL_W));
-  el.y = Math.max(-LOGICAL_H, Math.min(el.y, LOGICAL_H));
+
+  if (el.type === "shape" && el.shape === "circle") {
+    const size = Math.max(el.w, el.h);
+    el.w = size;
+    el.h = size;
+  }
+
+  el.x = Math.max(0, Math.min(el.x, LOGICAL_W - el.w));
+  el.y = Math.max(0, Math.min(el.y, LOGICAL_H - el.h));
+
+  el.w = Math.min(el.w, LOGICAL_W - el.x);
+  el.h = Math.min(el.h, LOGICAL_H - el.y);
 }
 
     function updateCanvasScale() {
