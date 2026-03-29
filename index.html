@@ -1012,14 +1012,19 @@
   <div class="field">
     <label>Animation</label>
     <select id="elAnimType">
-      <option value="none">None</option>
-      <option value="fade-in">Fade In</option>
-      <option value="slide-up">Slide Up</option>
-      <option value="slide-right">Slide Right</option>
-      <option value="zoom-in">Zoom In</option>
-      <option value="pop-in">Pop In</option>
-      <option value="flip-left">Flip Left</option>
-    </select>
+  <option value="none">None</option>
+  <option value="fade-in">Fade In</option>
+  <option value="slide-up">Slide Up</option>
+  <option value="slide-down">Slide Down</option>
+  <option value="slide-left">Slide Left</option>
+  <option value="slide-right">Slide Right</option>
+  <option value="zoom-in">Zoom In</option>
+  <option value="zoom-out">Zoom Out</option>
+  <option value="pop-in">Pop In</option>
+  <option value="bounce-in">Bounce In</option>
+  <option value="flip-left">Flip Left</option>
+  <option value="flip-right">Flip Right</option>
+</select>
   </div>
   <div class="field">
     <label>Order</label>
@@ -2668,6 +2673,16 @@ function playElementAnimation(node, el) {
       { opacity: 0, transform: `translateY(40px) rotate(${rotation}deg)` },
       { opacity: finalOpacity, transform: `translateY(0px) rotate(${rotation}deg)` }
     ];
+  } else if (type === "slide-down") {
+    keyframes = [
+      { opacity: 0, transform: `translateY(-40px) rotate(${rotation}deg)` },
+      { opacity: finalOpacity, transform: `translateY(0px) rotate(${rotation}deg)` }
+    ];
+  } else if (type === "slide-left") {
+    keyframes = [
+      { opacity: 0, transform: `translateX(48px) rotate(${rotation}deg)` },
+      { opacity: finalOpacity, transform: `translateX(0px) rotate(${rotation}deg)` }
+    ];
   } else if (type === "slide-right") {
     keyframes = [
       { opacity: 0, transform: `translateX(-48px) rotate(${rotation}deg)` },
@@ -2678,15 +2693,33 @@ function playElementAnimation(node, el) {
       { opacity: 0, transform: `scale(0.72) rotate(${rotation}deg)` },
       { opacity: finalOpacity, transform: `scale(1) rotate(${rotation}deg)` }
     ];
+  } else if (type === "zoom-out") {
+    keyframes = [
+      { opacity: 0, transform: `scale(1.35) rotate(${rotation}deg)` },
+      { opacity: finalOpacity, transform: `scale(1) rotate(${rotation}deg)` }
+    ];
   } else if (type === "pop-in") {
     keyframes = [
       { opacity: 0, transform: `scale(0.45) rotate(${rotation}deg)` },
       { opacity: finalOpacity, transform: `scale(1.08) rotate(${rotation}deg)`, offset: 0.7 },
       { opacity: finalOpacity, transform: `scale(1) rotate(${rotation}deg)` }
     ];
+  } else if (type === "bounce-in") {
+    keyframes = [
+      { opacity: 0, transform: `scale(0.3) rotate(${rotation}deg)` },
+      { opacity: finalOpacity, transform: `scale(1.18) rotate(${rotation}deg)`, offset: 0.55 },
+      { opacity: finalOpacity, transform: `scale(0.92) rotate(${rotation}deg)`, offset: 0.78 },
+      { opacity: finalOpacity, transform: `scale(1.04) rotate(${rotation}deg)`, offset: 0.9 },
+      { opacity: finalOpacity, transform: `scale(1) rotate(${rotation}deg)` }
+    ];
   } else if (type === "flip-left") {
     keyframes = [
       { opacity: 0, transform: `perspective(900px) rotateY(-90deg) rotate(${rotation}deg)` },
+      { opacity: finalOpacity, transform: `perspective(900px) rotateY(0deg) rotate(${rotation}deg)` }
+    ];
+  } else if (type === "flip-right") {
+    keyframes = [
+      { opacity: 0, transform: `perspective(900px) rotateY(90deg) rotate(${rotation}deg)` },
       { opacity: finalOpacity, transform: `perspective(900px) rotateY(0deg) rotate(${rotation}deg)` }
     ];
   }
