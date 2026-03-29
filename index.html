@@ -2467,14 +2467,18 @@ parsed = JSON.parse(text);
     const thumb = document.createElement("div");
     thumb.className = "slide-thumb";
     thumb.style.background = slide.bg || "#fff";
-    const hasAnimation = slide.elements.some((el) => el.animType && el.animType !== "none");
 
-if (hasAnimation) {
-  const badge = document.createElement("div");
-  badge.className = "slide-thumb-badge";
-  badge.textContent = "★";
-  thumb.appendChild(badge);
-}
+    const hasAnimation = slide.elements.some((el) => el.animType && el.animType !== "none");
+    if (hasAnimation) {
+      const badge = document.createElement("div");
+      badge.className = "slide-thumb-badge";
+      badge.textContent = "★";
+      thumb.appendChild(badge);
+    }
+
+    const thumbW = 240;
+    const thumbH = 135;
+    const scale = Math.min(thumbW / LOGICAL_W, thumbH / LOGICAL_H);
 
     slide.elements
       .slice()
@@ -2483,13 +2487,13 @@ if (hasAnimation) {
       .forEach((el) => {
         const mini = document.createElement("div");
         mini.style.position = "absolute";
-        mini.style.left = `${(el.x / LOGICAL_W) * 100}%`;
-        mini.style.top = `${(el.y / LOGICAL_H) * 100}%`;
-        mini.style.width = `${Math.max(4, (el.w / LOGICAL_W) * 100)}%`;
-        mini.style.height = `${Math.max(4, (el.h / LOGICAL_H) * 100)}%`;
+        mini.style.left = `${el.x * scale}px`;
+        mini.style.top = `${el.y * scale}px`;
+        mini.style.width = `${Math.max(2, el.w * scale)}px`;
+        mini.style.height = `${Math.max(2, el.h * scale)}px`;
         mini.style.opacity = el.opacity ?? 1;
         mini.style.transform = `rotate(${el.rotation || 0}deg)`;
-        mini.style.borderRadius = `${Math.max(2, ((el.radius || 0) / LOGICAL_W) * 100)}px`;
+        mini.style.transformOrigin = "center center";
         mini.style.overflow = "hidden";
         mini.style.boxSizing = "border-box";
 
@@ -2499,19 +2503,25 @@ if (hasAnimation) {
           mini.style.background = isTransparentLike(el.bgColor)
             ? "transparent"
             : (el.bgColor || "transparent");
-          mini.style.fontSize = `${Math.max(6, (el.fontSize || 32) * 0.12)}px`;
+          mini.style.fontSize = `${Math.max(6, (el.fontSize || 32) * scale)}px`;
           mini.style.fontWeight = String(el.fontWeight || 400);
           mini.style.textAlign = el.align || "left";
           mini.style.lineHeight = "1.1";
-          mini.style.padding = "2px 3px";
+          mini.style.padding = `${Math.max(1, 10 * scale)}px ${Math.max(1, 12 * scale)}px`;
           mini.style.whiteSpace = "nowrap";
           mini.style.textOverflow = "ellipsis";
+          mini.style.borderRadius = `${Math.max(0, (el.radius || 0) * scale)}px`;
         } else if (el.type === "shape") {
           mini.style.background = el.color || "#93c5fd";
-          mini.style.borderRadius = el.shape === "circle"
-            ? "999px"
-            : `${Math.max(2, ((el.radius || 24) / LOGICAL_W) * 100)}px`;
+
+          if (el.shape === "circle") {
+            mini.style.borderRadius = "50%";
+          } else {
+            mini.style.borderRadius = `${Math.max(0, (el.radius || 24) * scale)}px`;
+          }
         } else if (el.type === "image") {
+          mini.style.borderRadius = `${Math.max(0, (el.radius || 18) * scale)}px`;
+
           if (el.imageSrc) {
             const img = document.createElement("img");
             img.src = el.imageSrc;
